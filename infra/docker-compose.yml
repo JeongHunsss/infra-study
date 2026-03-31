@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ../backend # 1. 도커가 코드를 포장할 작업 공간 (한 칸 위로 가서 backend 폴더 지정)
+      dockerfile: Dockerfile # 2. 그 폴더 안에서 읽을 레시피 파일 이름
+    container_name: study-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env # 같은 infra 폴더 안에 있으니 그대로 작성
+    depends_on:
+      - mysql
+      - postgres-vector
+      - redis
+
+  # 2. MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: study-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # .env에서 값을 가져옴
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3307:3306"
+
+  # 3. PostgreSQL (pgvector)
+  postgres-vector:
+    image: pgvector/pgvector:pg16
+    container_name: study-pgvector
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+
+  # 4. Redis (비밀번호 없이 기본 포트만 열어둔 상태)
+  redis:
+    image: redis:alpine
+    container_name: study-redis
+    ports:
+      - "6379:6379"
