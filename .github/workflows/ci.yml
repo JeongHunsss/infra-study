@@ -69,8 +69,13 @@ jobs:
             mkdir -p nginx
             curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/master/nginx/nginx.conf
 
-            docker rm -f project-backend || true
-            # 3. 도커 컴포즈로 기존 거 끄고 새 이미지로 다시 띄우기
+            # 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > ~/deploy/.env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> ~/deploy/.env
+            echo "MYSQL_DATABASE=my_database_name" >> ~/deploy/.env  # (이건 직접 이름 적거나 시크릿에서 가져오기)
+
+            # 도커 컴포즈 실행
+            cd ~/deploy
             docker-compose down
             docker-compose up -d
 
