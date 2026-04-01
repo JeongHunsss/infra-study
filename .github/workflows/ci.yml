@@ -3,7 +3,7 @@ name: Backend CI Pipeline
 # 언제 이 작업이 실행될지 결정 (main 브랜치에 코드가 push 될 때마다)
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "master"]
 
 jobs:
   build-and-push:
