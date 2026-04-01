@@ -1,11 +1,21 @@
 from fastapi import FastAPI
 import os
+from database import check_db_connection, engine # database.py에서 가져오기
 
 app = FastAPI()
 
+# 서버가 시작될 때 실행되는 이벤트
+@app.on_event("startup")
+def on_startup():
+    print("🚀 서버가 시작됩니다. DB 연결을 확인합니다...")
+    if check_db_connection():
+        print("✅ DB 연결 확인 완료!")
+    else:
+        print("❌ DB 연결에 실패했습니다. 인프라 설정을 확인하세요.")
+
 @app.get("/")
 def read_root():
-    return {"message":  "CD 테스트1"}
+    return {"message": "DB 성공"}
 
 @app.get("/health")
 def health_check():
