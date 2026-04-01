@@ -4,3 +4,4 @@ python-dotenv
 redis
 pymysql
 psycopg2-binary
+sqlalchemy
