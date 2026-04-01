@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_url, create_engine, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 # 1. 환경변수에서 정보 읽어오기 (로봇이 만든 .env랑 이름 맞춰야 함!)
