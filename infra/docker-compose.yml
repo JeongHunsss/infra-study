@@ -10,6 +10,7 @@ services:
     depends_on:
       - mysql
       - redis
+    env_file: .env
 
   nginx:
     image: nginx:latest
@@ -34,6 +35,7 @@ services:
       - "3306"
     volumes:
       - ./db_data/mysql:/var/lib/mysql
+    env_file: .env
 
   # 2. 인메모리 캐시 (Redis)
   redis:
