@@ -65,9 +65,9 @@ jobs:
             # (서버에 코드 저장할 폴더 만들고 깃헙에서 땡겨옴)
             mkdir -p ~/deploy
             cd ~/deploy
-            curl -O https://raw.githubusercontent.com/JeongHunsss/infra-study/main/docker-compose.yml
+            curl -O https://raw.githubusercontent.com/JeongHunsss/infra-study/master/docker-compose.yml
             mkdir -p nginx
-            curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/main/nginx/nginx.conf
+            curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/master/nginx/nginx.conf
 
             # 3. 도커 컴포즈로 기존 거 끄고 새 이미지로 다시 띄우기
             docker-compose down
