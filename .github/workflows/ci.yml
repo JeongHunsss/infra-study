@@ -62,11 +62,13 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/project-backend:latest
 
             # 2. 깃헙에서 최신 docker-compose.yml, nginx.conf 파일 서버로 다운받기
-            # (서버에 코드 저장할 폴더 만들고 깃헙에서 땡겨옴)
-            mkdir -p ~/deploy
+            mkdir -p ~/deploy/nginx  # 폴더 미리 만들기
             cd ~/deploy
-            curl -O https://raw.githubusercontent.com/JeongHunsss/infra-study/master/docker-compose.yml
-            mkdir -p nginx
+
+            # 주소 중간에 /infra/ 가 들어가는 게 핵심!
+            curl -O https://raw.githubusercontent.com/JeongHunsss/infra-study/master/infra/docker-compose.yml
+
+            # Nginx 설정 파일도 경로가 맞는지 꼭 확인! (보통 nginx/nginx.conf 일 것임)
             curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/master/nginx/nginx.conf
 
             # 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
