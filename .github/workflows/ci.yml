@@ -1,0 +1,32 @@
+name: Backend CI Pipeline
+
+# 언제 이 작업이 실행될지 결정 (main 브랜치에 코드가 push 될 때마다)
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # GitHub이 빌려주는 임시 우분투 컴퓨터에서 실행
+
+    steps:
+      # 1. GitHub 저장소에 있는 내 코드 불러오기
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Docker Hub에 로그인하기 (아까 금고에 숨겨둔 정보 사용)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. 백엔드 코드 도커 이미지로 굽고, Docker Hub로 밀어 올리기(Push)
+      - name: Build and push Backend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend # 도커파일이 있는 백엔드 폴더 지정
+          file: ./backend/Dockerfile # 레시피 파일 위치
+          push: true # 다 구웠으면 Hub로 올려라!
+          # 태그 이름 지정: '내아이디/이미지이름:최신버전'
+          tags: ${{ secrets.DOCKER_USERNAME }}/project-backend:latest
