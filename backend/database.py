@@ -1,3 +1,5 @@
+
+import time
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -16,17 +18,22 @@ DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 4. [핵심] 연결 확인용 함수
 def check_db_connection():
-    try:
-        # DB에 "1"이라는 숫자를 던져서 잘 돌아오는지 확인 (Select 1)
-        with engine.connect() as connection:
-            connection.execute(text("SELECT 1"))
-        print("✅ DB 연결 성공! 인프라 세팅 완벽함.")
-        return True
-    except Exception as e:
-        print(f"❌ DB 연결 실패: {e}")
-        return False
+    max_retries = 5  # 최대 5번 시도
+    retry_interval = 5  # 5초 간격
+    
+    for i in range(max_retries):
+        try:
+            with engine.connect() as connection:
+                connection.execute(text("SELECT 1"))
+            print(f"✅ DB 연결 성공! ({i+1}번 시도 만에 성공)")
+            return True
+        except Exception as e:
+            print(f"⚠️ {i+1}번 시도 실패: DB가 아직 준비되지 않았음... ({retry_interval}초 후 재시도)")
+            time.sleep(retry_interval)
+            
+    print("❌ 결국 DB 연결에 실패함.")
+    return False
 
 # 실행 시 바로 확인
 if __name__ == "__main__":
