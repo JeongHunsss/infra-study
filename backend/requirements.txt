@@ -5,3 +5,4 @@ redis
 pymysql
 psycopg2-binary
 sqlalchemy
+cryptography
