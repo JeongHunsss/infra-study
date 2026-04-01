@@ -69,6 +69,7 @@ jobs:
             mkdir -p nginx
             curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/master/nginx/nginx.conf
 
+            docker rm -f project-backend || true
             # 3. 도커 컴포즈로 기존 거 끄고 새 이미지로 다시 띄우기
             docker-compose down
             docker-compose up -d
