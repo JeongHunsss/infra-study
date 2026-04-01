@@ -5,7 +5,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "FastAPI 서버가 성공적으로 켜졌습니다! 🎉"}
+    return {"message":  "ci 테스트"}
 
 @app.get("/health")
 def health_check():
