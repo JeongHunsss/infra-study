@@ -58,23 +58,18 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd ~
+            cd ~/deploy
 
-            # 1. deploy 폴더가 없으면 새로 가져오고(clone), 있으면 무시!
-            if [ ! -d "deploy" ]; then
-              git clone https://github.com/JeongHunsss/infra-study.git deploy
-            fi
+            # 1. 서버에 있는 지저분한 변경사항 싹 무시하고 깃헙 최신판으로 강제 동기화
+            git fetch origin master
+            git reset --hard origin/master
 
-            # 2. 배포 폴더로 들어가서 최신 코드 땡겨오기
-            cd deploy
-            git pull origin master
-
-            # 3. 도커 컴포즈가 읽을 .env 파일 실시간 생성
+            # 2. .env 파일 생성 (이건 깃에 없으니까 유지됨)
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > infra/.env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> infra/.env
             echo "MYSQL_DATABASE=infra_study" >> infra/.env
 
-            # 4. 무중단 배포 스크립트에 실행 권한 주고 출격!
+            # 3. 배포 스크립트 실행
             chmod +x infra/deploy.sh
             ./infra/deploy.sh
 
