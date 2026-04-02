@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 배포 폴더로 이동 (안전빵)
+# 배포 폴더로 이동 (기본 위치: ~/deploy)
 cd ~/deploy
 
 echo "🚀 무중단 배포 스크립트 시작!"
@@ -23,15 +23,14 @@ fi
 echo "🎯 현재 상태: $CURRENT_COLOR 동작 중"
 echo "✨ 배포 타겟: $TARGET_COLOR (포트: $TARGET_PORT) 출격 준비!"
 
-# 2. 새 버전(타겟) 컨테이너 띄우기
-# 공통 인프라(DB, Nginx)는 놔두고 새로운 색깔의 백엔드만 최신 이미지로 켬
-docker-compose -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml pull
-docker-compose -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml up -d
-
+# 2. 새 버전 컨테이너 띄우기
+# --env-file 옵션으로 infra/.env 를 강제로 읽게 함
+docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml pull
+docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml up -d
 # 3. 새 컨테이너가 켜질 때까지 얌전히 기다리기 (Health Check)
 # 백엔드 서버가 완전히 뜰 때까지 10초 정도 여유를 줌 (서버 속도에 따라 늘려도 됨)
 echo "⏳ $TARGET_COLOR 서버 부팅 대기 중... (10초)"
-sleep 10
+sleep 15
 
 # 4. Nginx의 방향 틀기 (대망의 하이라이트)
 # service-url.inc 파일의 내용을 통째로 새 주소로 덮어씀 (>)
