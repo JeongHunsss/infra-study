@@ -42,6 +42,6 @@ docker exec nginx nginx -s reload
 
 # 6. 구버전 컨테이너 종료 (이제 쉬어라!)
 echo "👋 구버전($CURRENT_COLOR) 컨테이너 종료 중..."
-docker-compose -f docker-compose.${CURRENT_COLOR}.yml down
+docker rm -f backend-${CURRENT_COLOR} || echo "기존 컨테이너가 없습니다."
 
 echo "✅ 무중단 배포 완벽하게 성공!"
