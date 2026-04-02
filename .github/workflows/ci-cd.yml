@@ -58,19 +58,23 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # 1. 배포 폴더로 이동 
-            # (서버에 미리 git clone https://github.com/JeongHunsss/infra-study.git ~/deploy 가 되어있다고 가정!)
-            cd ~/deploy
+            cd ~
 
-            # 2. 깃에서 최신 인프라 파일들(compose 3개, deploy.sh 등) 한방에 땡겨오기
+            # 1. deploy 폴더가 없으면 새로 가져오고(clone), 있으면 무시!
+            if [ ! -d "deploy" ]; then
+              git clone https://github.com/JeongHunsss/infra-study.git deploy
+            fi
+
+            # 2. 배포 폴더로 들어가서 최신 코드 땡겨오기
+            cd deploy
             git pull origin master
 
-            # 3. 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
+            # 3. 도커 컴포즈가 읽을 .env 파일 실시간 생성
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=infra_study" >> .env  # 아까 정한 이름 고정!
+            echo "MYSQL_DATABASE=infra_study" >> .env
 
-            # 4. 무중단 배포 스크립트에 실행 권한 확실히 주고 실행!
+            # 4. 무중단 배포 스크립트에 실행 권한 주고 출격!
             chmod +x infra/deploy.sh
             ./infra/deploy.sh
 
