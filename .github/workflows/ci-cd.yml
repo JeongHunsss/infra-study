@@ -71,8 +71,8 @@ jobs:
             echo "MYSQL_DATABASE=infra_study" >> .env  # 아까 정한 이름 고정!
 
             # 4. 무중단 배포 스크립트에 실행 권한 확실히 주고 실행!
-            chmod +x deploy.sh
-            ./deploy.sh
+            chmod +x infra/deploy.sh
+            ./infra/deploy.sh
 
       # 6. (중요) 작업 성공/실패 여부 상관없이 무조건 보안 그룹에서 IP 제거
       - name: Remove GitHub IP from Security Group

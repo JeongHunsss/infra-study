@@ -25,8 +25,8 @@ echo "✨ 배포 타겟: $TARGET_COLOR (포트: $TARGET_PORT) 출격 준비!"
 
 # 2. 새 버전(타겟) 컨테이너 띄우기
 # 공통 인프라(DB, Nginx)는 놔두고 새로운 색깔의 백엔드만 최신 이미지로 켬
-docker-compose -f docker-compose.infra.yml -f docker-compose.${TARGET_COLOR}.yml pull
-docker-compose -f docker-compose.infra.yml -f docker-compose.${TARGET_COLOR}.yml up -d
+docker-compose -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml pull
+docker-compose -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml up -d
 
 # 3. 새 컨테이너가 켜질 때까지 얌전히 기다리기 (Health Check)
 # 백엔드 서버가 완전히 뜰 때까지 10초 정도 여유를 줌 (서버 속도에 따라 늘려도 됨)
