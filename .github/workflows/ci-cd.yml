@@ -74,7 +74,7 @@ jobs:
             # 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > ~/deploy/.env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> ~/deploy/.env
-            echo "MYSQL_DATABASE=my_database_name" >> ~/deploy/.env  # (이건 직접 이름 적거나 시크릿에서 가져오기)
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> ~/deploy/.env  # (이건 직접 이름 적거나 시크릿에서 가져오기)
 
             # 도커 컴포즈 실행
             cd ~/deploy
