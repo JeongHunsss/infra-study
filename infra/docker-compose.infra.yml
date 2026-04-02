@@ -1,17 +1,5 @@
-version: "3.8"
-
 services:
-  backend:
-    image: ${DOCKER_USERNAME}/project-backend:latest
-    container_name: project-backend
-    restart: always
-    expose:
-      - "8000"
-    depends_on:
-      - mysql
-      - redis
-    env_file: .env
-
+  # 1. 수문장 Nginx
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -20,24 +8,21 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - backend
+      # 아까 만든 변수 파일도 Nginx가 읽을 수 있게 볼륨 연결! (경로 주의)
+      - ./nginx/service-url.inc:/etc/nginx/conf.d/service-url.inc
 
-  # 1. 메인 관계형 DB (MySQL)
+  # 2. 메인 DB MySQL
   mysql:
     image: mysql:8.0
     container_name: mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    env_file: .env
     expose:
       - "3306"
     volumes:
       - ./db_data/mysql:/var/lib/mysql
-    env_file: .env
 
-  # 2. 인메모리 캐시 (Redis)
+  # 3. 인메모리 캐시 Redis
   redis:
     image: redis:alpine
     container_name: redis

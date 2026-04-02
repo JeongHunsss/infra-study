@@ -1,0 +1,8 @@
+services:
+  backend-green:
+    image: ${DOCKER_USERNAME}/project-backend:latest
+    container_name: backend-green
+    restart: always
+    env_file: .env
+    expose:
+      - "8001"

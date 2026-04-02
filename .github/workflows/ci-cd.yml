@@ -50,7 +50,7 @@ jobs:
             --port 22 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
-      # 5. 서버 접속 및 배포
+      # 5. 서버 접속 및 무중단 배포 스크립트 실행
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -58,28 +58,21 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # 1. 최신 백엔드 이미지 땡겨오기
-            docker pull ${{ secrets.DOCKER_USERNAME }}/project-backend:latest
-
-            # 2. 깃헙에서 최신 docker-compose.yml, nginx.conf 파일 서버로 다운받기
-            mkdir -p ~/deploy/nginx  # 폴더 미리 만들기
+            # 1. 배포 폴더로 이동 
+            # (서버에 미리 git clone https://github.com/JeongHunsss/infra-study.git ~/deploy 가 되어있다고 가정!)
             cd ~/deploy
 
-            # 주소 중간에 /infra/ 가 들어가는 게 핵심!
-            curl -O https://raw.githubusercontent.com/JeongHunsss/infra-study/master/infra/docker-compose.yml
+            # 2. 깃에서 최신 인프라 파일들(compose 3개, deploy.sh 등) 한방에 땡겨오기
+            git pull origin master
 
-            # Nginx 설정 파일도 경로가 맞는지 꼭 확인! (보통 nginx/nginx.conf 일 것임)
-            curl -o nginx/nginx.conf https://raw.githubusercontent.com/JeongHunsss/infra-study/master/nginx/nginx.conf
+            # 3. 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+            echo "MYSQL_DATABASE=infra_study" >> .env  # 아까 정한 이름 고정!
 
-            # 도커 컴포즈가 읽을 .env 파일 실시간 생성하기
-            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > ~/deploy/.env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> ~/deploy/.env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> ~/deploy/.env  # (이건 직접 이름 적거나 시크릿에서 가져오기)
-
-            # 도커 컴포즈 실행
-            cd ~/deploy
-            docker-compose down
-            docker-compose up -d
+            # 4. 무중단 배포 스크립트에 실행 권한 확실히 주고 실행!
+            chmod +x deploy.sh
+            ./deploy.sh
 
       # 6. (중요) 작업 성공/실패 여부 상관없이 무조건 보안 그룹에서 IP 제거
       - name: Remove GitHub IP from Security Group

@@ -1,0 +1,8 @@
+services:
+  backend-blue:
+    image: ${DOCKER_USERNAME}/project-backend:latest
+    container_name: backend-blue
+    restart: always
+    env_file: .env
+    expose:
+      - "8000"
