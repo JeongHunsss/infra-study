@@ -70,9 +70,9 @@ jobs:
             git pull origin master
 
             # 3. 도커 컴포즈가 읽을 .env 파일 실시간 생성
-            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=infra_study" >> .env
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > infra/.env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> infra/.env
+            echo "MYSQL_DATABASE=infra_study" >> infra/.env
 
             # 4. 무중단 배포 스크립트에 실행 권한 주고 출격!
             chmod +x infra/deploy.sh
