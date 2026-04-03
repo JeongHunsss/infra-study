@@ -4,6 +4,7 @@ services:
     container_name: backend-blue
     restart: always
     env_file: .env
+    command: python -m uvicorn main:app --host 0.0.0.0 --port 8000
     expose:
       - "8000"
     networks:
