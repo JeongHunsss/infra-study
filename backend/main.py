@@ -15,7 +15,7 @@ def on_startup():
 
 @app.get("/")
 def read_root():
-    return {"message": "무중단 배포 green"}
+    return {"message": "무중단 배포 blue"}
 
 @app.get("/health")
 def health_check():
