@@ -34,8 +34,11 @@ docker exec nginx sh -c "echo 'set \$target_url backend-${TARGET_COLOR}:${TARGET
 echo "🔄 Nginx 트래픽 전환 중..."
 docker exec nginx nginx -s reload || echo "⚠️ Nginx 리로드 실패"
 
+echo "⏳ 기존 연결들이 안전하게 종료될 때까지 대기 중... (5초)"
+sleep 5
+
 # 6. 구버전 컨테이너 종료 (이름으로 확실히 제거)
 echo "👋 구버전($CURRENT_COLOR) 컨테이너 종료 중..."
 docker rm -f backend-${CURRENT_COLOR} || echo "⚠️ 삭제할 컨테이너가 없음"
 
-echo "✅ 무중단 배포 완벽하게 성공!"
+echo "✅ 배포 성공!"
