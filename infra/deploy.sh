@@ -28,9 +28,9 @@ docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/
 echo "⏳ $TARGET_COLOR 서버 부팅 대기 중... (20초)"
 sleep 20
 
-# 기존: proxy_pass http://... (X)
-# 수정: 이미 선언된 $target_url 변수의 값만 덮어쓰기 (O)
-echo "set \$target_url backend-${TARGET_COLOR}:${TARGET_PORT};" > ./nginx/service-url.inc
+# 기존: backend-blue:8000
+# 수정: http://까지 포함해서 변수에 저장
+echo "set \$target_url http://backend-${TARGET_COLOR}:${TARGET_PORT};" > ./nginx/service-url.inc
 
 # 5. Nginx 새로고침 (실패해도 죽지 않게 || true)
 echo "🔄 Nginx 트래픽 전환 중..."
