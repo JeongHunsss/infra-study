@@ -19,23 +19,23 @@ fi
 echo "🎯 현재 상태: $CURRENT_COLOR 동작 중"
 echo "✨ 배포 타겟: $TARGET_COLOR (포트: $TARGET_PORT) 출격 준비!"
 
-# 2. 새 버전 컨테이너 띄우기
-# 만약 이미 띄워져 있다면 무시하고 진행하도록 함
-docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml up -d --pull always
+# 2. 새 버전 컨테이너 띄우기 (구버전 호환용 명령어)
+# --pull always 대신 pull 명령어를 따로 실행함
+docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml pull
+docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/docker-compose.${TARGET_COLOR}.yml up -d
 
-# 3. 새 컨테이너 부팅 대기
-echo "⏳ $TARGET_COLOR 서버 부팅 대기 중... (15초)"
-sleep 15
+# 3. 새 컨테이너 부팅 대기 (네트워크 안정화를 위해 20초)
+echo "⏳ $TARGET_COLOR 서버 부팅 대기 중... (20초)"
+sleep 20
 
 # 4. Nginx의 방향 틀기
 echo "proxy_pass http://backend-${TARGET_COLOR}:${TARGET_PORT};" > ./nginx/service-url.inc
 
-# 5. Nginx 새로고침 (실패해도 스크립트 안 멈추게 || true 붙임)
+# 5. Nginx 새로고침 (실패해도 죽지 않게 || true)
 echo "🔄 Nginx 트래픽 전환 중..."
-docker exec nginx nginx -s reload || echo "⚠️ Nginx 리로드 실패 (설정 확인 필요)"
+docker exec nginx nginx -s reload || echo "⚠️ Nginx 리로드 실패"
 
-# 6. 구버전 컨테이너 종료 (이게 핵심!)
-# || true를 붙여서 삭제할 게 없어도 스크립트가 안 멈추게 함
+# 6. 구버전 컨테이너 종료 (이름으로 확실히 제거)
 echo "👋 구버전($CURRENT_COLOR) 컨테이너 종료 중..."
 docker rm -f backend-${CURRENT_COLOR} || echo "⚠️ 삭제할 컨테이너가 없음"
 
