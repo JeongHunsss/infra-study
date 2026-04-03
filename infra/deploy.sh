@@ -28,8 +28,7 @@ docker-compose --env-file infra/.env -f infra/docker-compose.infra.yml -f infra/
 echo "⏳ $TARGET_COLOR 서버 부팅 대기 중... (20초)"
 sleep 20
 
-# 앞뒤에 아무것도 붙이지 말고 딱 '주소:포트'만 저장
-echo "set \$target_url backend-${TARGET_COLOR}:${TARGET_PORT};" > ./nginx/service-url.inc
+docker exec nginx sh -c "echo 'set \$target_url backend-${TARGET_COLOR}:${TARGET_PORT};' > /etc/nginx/conf.d/service-url.inc"
 
 # 5. Nginx 새로고침 (실패해도 죽지 않게 || true)
 echo "🔄 Nginx 트래픽 전환 중..."
