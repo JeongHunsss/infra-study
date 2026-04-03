@@ -6,3 +6,9 @@ services:
     env_file: .env
     expose:
       - "8000"
+    networks:
+      - infra_network
+
+networks:
+  infra_network:
+    external: true
